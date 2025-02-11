@@ -9,10 +9,15 @@ from fastapi.middleware.cors import CORSMiddleware
 prefix = settings.prefix
 origins = settings.BACKEND_CORS_ORIGINS
 
-
 init_db()
 app = FastAPI(title="FastAPI Firebase Backend")
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(AuthMiddleware)
 
 app.include_router(admin.router, prefix=prefix)

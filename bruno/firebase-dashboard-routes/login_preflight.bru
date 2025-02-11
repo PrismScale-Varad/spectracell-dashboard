@@ -1,13 +1,19 @@
 meta {
-  name: login
+  name: login_preflight
   type: http
-  seq: 10
+  seq: 9
 }
 
-post {
+options {
   url: http://127.0.0.1:8000/api/v1/auth/login
   body: json
   auth: none
+}
+
+headers {
+  Access-Control-Request-Method: POST
+  Access-Control-Request-Headers: content-type, authorization
+  Origin: localhost
 }
 
 body:json {
