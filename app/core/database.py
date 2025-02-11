@@ -1,17 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
-import logging
+from app.core.config import settings, logger  # Import logger from config
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Use environment variable for database URL (replace with actual Neon URL)
-DATABASE_URL = os.getenv("DATABASE_URL")  
+# Use environment variable for database URL
+DATABASE_URL = settings.DATABASE_URL
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not set")
 
+# Initialize the database connection
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

@@ -1,5 +1,7 @@
+import logging
 from fastapi import APIRouter, HTTPException, Query
 from app.services.user_service import list_users
+from app.core.config import logger
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -11,4 +13,5 @@ def get_users(
     try:
         return list_users(limit=limit, last_uid=last_uid)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.exception("Failed to fetch users")  # Logs the full stack trace
+        raise HTTPException(status_code=500, detail="Internal server error")

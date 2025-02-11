@@ -1,11 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials, auth, firestore
 import os
-import logging
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from app.core.config import settings, logger  # Use centralized logger
 
 # Load Firebase credentials from environment variables
 FIREBASE_CREDENTIALS = os.getenv("FIREBASE_CREDENTIALS", "app/core/firebase-adminsdk.json")
@@ -14,10 +10,11 @@ FIREBASE_CREDENTIALS = os.getenv("FIREBASE_CREDENTIALS", "app/core/firebase-admi
 if not firebase_admin._apps:
     cred = credentials.Certificate(FIREBASE_CREDENTIALS)
     firebase_admin.initialize_app(cred)
+    logger.info("✅ Successfully connected to Firebase.")
 
 # Singleton Firestore Client
 _firestore_client = firestore.client()
-logger.info("✅ Successfully connected to Firebase Firestore.")
+logger.info("✅ Firestore client initialized.")
 
 def get_firestore_client():
     """Returns a shared Firestore client instance."""
@@ -34,11 +31,14 @@ def get_firebase_user(email: str):
 
 def create_firebase_user(email: str, password: str):
     """Creates a new Firebase user."""
-    return auth.create_user(email=email, password=password)
+    user = auth.create_user(email=email, password=password)
+    logger.info(f"✅ Firebase user created: {email}")
+    return user
 
 def delete_firebase_user(user_id: str):
     """Deletes a Firebase user."""
     auth.delete_user(user_id)
+    logger.info(f"🗑️ Firebase user deleted: {user_id}")
 
 # ---------------- FIRESTORE USERS ----------------
 
@@ -50,14 +50,17 @@ def get_user_from_firestore(user_id: str):
 def update_user_in_firestore(user_id: str, update_data: dict):
     """Updates a Firestore user document."""
     _firestore_client.collection("users").document(user_id).update(update_data)
+    logger.info(f"🔄 Updated Firestore user: {user_id}")
 
 def delete_user_from_firestore(user_id: str):
     """Deletes a user document from Firestore."""
     _firestore_client.collection("users").document(user_id).delete()
+    logger.info(f"🗑️ Firestore user deleted: {user_id}")
 
 # ---------------- PAGINATED LIST USERS ----------------
 
 def get_users_from_firestore(limit: int = 10, last_uid: str = None):
+    """Retrieve a paginated list of users from Firestore."""
     db = get_firestore_client()
     users_ref = db.collection("users").order_by("uid").limit(limit)
 
@@ -67,7 +70,6 @@ def get_users_from_firestore(limit: int = 10, last_uid: str = None):
             users_ref = users_ref.start_after(last_doc)
 
     users_stream = users_ref.stream()
-
     users = []
     last_doc_id = None  # Track last document for pagination
 
@@ -82,4 +84,5 @@ def get_users_from_firestore(limit: int = 10, last_uid: str = None):
         })
         last_doc_id = user_data.get("uid")  # Store last user's UID for next page
 
+    logger.info(f"📜 Retrieved {len(users)} users from Firestore.")
     return {"users": users, "next_page_uid": last_doc_id}

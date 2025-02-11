@@ -1,0 +1,36 @@
+import os
+import logging
+from pydantic import BaseSettings
+
+class Settings(BaseSettings):
+    # Database settings
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/mydatabase")
+
+    # JWT settings
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "your_secret_key_here")
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
+
+    # CORS settings
+    BACKEND_CORS_ORIGINS: list[str] = os.getenv("BACKEND_CORS_ORIGINS", "*").split(",")
+
+    # Firebase settings (if applicable)
+    FIREBASE_CREDENTIALS_PATH: str = os.getenv("FIREBASE_CREDENTIALS_PATH", "")
+
+    # Logger settings
+    LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO").upper()
+
+    class Config:
+        env_file = ".env"  # Load environment variables from .env file if present
+
+# Initialize settings
+settings = Settings()
+
+# Initialize logger
+logging.basicConfig(
+    level=settings.LOG_LEVEL,
+    format="%(asctime)s - [%(levelname)s] - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
+logger = logging.getLogger(__name__)
