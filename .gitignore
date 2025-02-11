@@ -22,7 +22,7 @@ logs/
 .env
 .env.local
 .env.*.backup
-firebase-adminsdk*.json  # Firebase credentials
+firebase-adminsdk.json
 
 # IDE / Editor files
 .vscode/
