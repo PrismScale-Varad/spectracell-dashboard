@@ -2,7 +2,9 @@ import os
 import logging
 from pydantic_settings import BaseSettings
 from passlib.context import CryptContext
+from dotenv import load_dotenv
 
+load_dotenv()
 class Settings(BaseSettings):
     # API Route prefix
     prefix: str="/api/v1"
@@ -26,8 +28,8 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: str = os.getenv("ENV", "DEVELOPMENT").upper()
 
-    class Config:
-        env_file = ".env"  # Load environment variables from .env file if present
+    # RESEND
+    RESEND_API_KEY: str = os.getenv("RESEND_KEY")
 
 # Initialize settings
 settings = Settings()

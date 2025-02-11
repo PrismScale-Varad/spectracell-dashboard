@@ -13,7 +13,10 @@ class AuthMiddleware(BaseHTTPMiddleware):
         self.exclude_routes = {"/api/v1/auth/login", "/docs", "/openapi.json"}  # Excluded routes (adjust as needed)
 
     async def dispatch(self, request: Request, call_next):
-        logger.info(request.url.path)
+
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         if request.url.path in self.exclude_routes:
             return await call_next(request)  # Skip authentication for excluded routes
 
