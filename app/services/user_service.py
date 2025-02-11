@@ -50,6 +50,7 @@ def create_admin(db: Session, user_data: UserCreate):
             <p>Hello {db_user.role},</p>
             <p>Your admin account has been created. Please set your password using the link below:</p>
             <a href="{reset_link}">Set Password</a>
+            <p>Reset token: {reset_token}</p>
             <p>This link will expire in 24 hours.</p>
             """
         )
@@ -96,6 +97,7 @@ def send_admin_reset_password_email(db: Session, email: str):
     <p>Hello,</p>
     <p>You requested a password reset. Click the link below to set a new password:</p>
     <p><a href="{reset_link}">{reset_link}</a></p>
+    <p>Reset token: {reset_token}</p>
     <p>If you didn't request this, please ignore this email.</p>
     """
     
@@ -163,7 +165,9 @@ def create_user_in_firebase(user_data: FirebaseUser):
         reset_link = auth.generate_password_reset_link(user_data.email)
         recipient = user_data.email
         subject = "Welcome to Spectracell"
-        body = f"<h1>Hello, User!</h1><p>Thank you for signing up.</p><p>Please set a password to continue {reset_link}</p>"
+        body = f"""<h1>Hello, {user_data.practice_name}!</h1>
+        <p>Please set a password to continue <a href="{reset_link}">Reset Link</a></p>
+        <p>Thank you for signing up.</p>"""
         send_email(recipient, subject, body)
 
         logger.info(f"✅ User created in Firebase: {user_data.email}")
@@ -245,9 +249,13 @@ def hold_user(user_id: str):
 def generate_password_reset_link(email: str):
     try:
         reset_link = auth.generate_password_reset_link(email)
+        user = get_user_by_email(email)
         recipient = email
         subject = "Reset your Spectracell password"
-        body = f"<h1>Hello, User!</h1><p>We recieved a password reset request.</p><p>Follow this link to reset your password: {reset_link}</p><p>If you did not request for a password reset, kindly ignore this email</p>"
+        body = f"""<h1>Hello, {user.practice_name}!</h1>
+        <p>We recieved a password reset request.</p>
+        <p>Follow this link to reset your password: <a href="{reset_link}">Reset Link</a></p>
+        <p>If you did not request for a password reset, kindly ignore this email</p>"""
         send_email(recipient, subject, body)
         logger.info(f"📩 Password reset link generated for: {email}")
         return reset_link
