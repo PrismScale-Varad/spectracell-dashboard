@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query, Body
+from fastapi import APIRouter, HTTPException, Query, Body, Request
 from app.services.user_service import (
     list_users,
     create_user_in_firebase,
@@ -10,6 +10,7 @@ from app.services.user_service import (
     generate_password_reset_link
 )
 from app.models.firebase_user import FirebaseUser
+from app.core.security import  require_superadmin
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -52,7 +53,8 @@ def update_user(user_id: str, update_data: dict = Body(...)):
 
 # Delete user
 @router.delete("/{user_id}", summary="Delete a user from Firebase")
-def delete_user(user_id: str):
+@require_superadmin
+def delete_user(request: Request, user_id: str):
     try:
         return delete_user_in_firebase(user_id)
     except Exception as e:
