@@ -1,0 +1,19 @@
+meta {
+  name: delete_admin
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://127.0.0.1:8000/api/v1/admin/admin@example.com
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@example.com",
+    "password": "securepassword123",
+    "role": "admin"
+  }
+}

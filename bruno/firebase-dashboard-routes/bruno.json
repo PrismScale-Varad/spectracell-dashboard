@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "firebase-dashboard-routes",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

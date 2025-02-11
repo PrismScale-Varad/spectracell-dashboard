@@ -1,0 +1,16 @@
+meta {
+  name: list_users
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://127.0.0.1:8000/api/v1/users?limit=100&last_uid=1LgUes9eqvRrK5fCupxd7XDOhjs1
+  body: none
+  auth: none
+}
+
+params:query {
+  limit: 100
+  last_uid: 1LgUes9eqvRrK5fCupxd7XDOhjs1
+}

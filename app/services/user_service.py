@@ -1,8 +1,13 @@
 from sqlalchemy.orm import Session
-from firebase_admin import auth, firestore
+from firebase_admin import auth
 from app.models.user import User, UserCreate, UserRole
 from app.core.security import hash_password
-from app.core.firebase import get_firestore_client
+from app.core.firebase import (
+    get_firestore_client,
+    update_user_in_firestore,
+    delete_user_from_firestore,
+    get_users_from_firestore,
+)
 
 db_firestore = get_firestore_client()
 
@@ -12,50 +17,64 @@ def get_admin_by_email(db: Session, email: str):
 
 # Neon PostgreSQL: Create dashboard admin
 def create_admin(db: Session, user_data: UserCreate):
+    if user_data.role not in [UserRole.ADMIN, UserRole.SUPERADMIN]:
+        raise ValueError("Invalid role. Only 'admin' or 'superadmin' are allowed.")
+
     hashed_pw = hash_password(user_data.password)
-    db_user = User(email=user_data.email, hashed_password=hashed_pw, role=user_data.role)
+    db_user = User(
+        email=user_data.email,
+        hashed_password=hashed_pw,
+        role=user_data.role
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-# Firebase: List all users
-def list_users():
-    users = auth.list_users().iterate_all()
-    user_list = []
-    for user in users:
-        user_data = user.__dict__.copy()
-        user_data.pop("_data", None)  # Remove internal Firebase data
-        user_list.append(user_data)
-    return user_list
+# Neon PostgreSQL: Delete dashboard admin by email
+def delete_admin_by_email(db: Session, email: str):
+    admin = db.query(User).filter(User.email == email).first()
+    if not admin:
+        raise ValueError("Admin not found")
+    
+    db.delete(admin)
+    db.commit()
+    return {"message": f"Admin with email {email} has been deleted successfully"}
+
+# Firebase: List users with pagination
+def list_users(page: int = 1, limit: int = 30, last_uid: str = None):
+    try:
+        return get_users_from_firestore(limit=limit, last_uid=last_uid)
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return {"error": "Failed to fetch users"}
 
 # Firebase: Create a new user
 def create_user_in_firebase(email: str, password: str, role: str):
     user = auth.create_user(email=email, password=password)
-    firestore_db = db_firestore.collection("users").document(user.uid)
-    firestore_db.set({"email": email, "role": role, "status": "pending"})
+    update_user_in_firestore(user.uid, {"email": email, "role": role, "status": "pending"})
     return user.uid
 
 # Firebase: Update user details
 def update_user_in_firebase(user_id: str, update_data: dict):
-    user = auth.update_user(user_id, **update_data)
-    db_firestore.collection("users").document(user_id).update(update_data)
-    return user
+    auth.update_user(user_id, **update_data)
+    update_user_in_firestore(user_id, update_data)
+    return {"message": "User updated"}
 
 # Firebase: Delete a user
 def delete_user_in_firebase(user_id: str):
     auth.delete_user(user_id)
-    db_firestore.collection("users").document(user_id).delete()
+    delete_user_from_firestore(user_id)
     return {"message": "User deleted"}
 
 # Firebase: Approve user
 def approve_user(user_id: str):
-    db_firestore.collection("users").document(user_id).update({"status": "approved"})
+    update_user_in_firestore(user_id, {"status": "approved"})
     return {"message": "User approved"}
 
 # Firebase: Put user on hold
 def hold_user(user_id: str):
-    db_firestore.collection("users").document(user_id).update({"status": "on_hold"})
+    update_user_in_firestore(user_id, {"status": "on_hold"})
     return {"message": "User put on hold"}
 
 # Firebase: Generate password reset link
