@@ -2,10 +2,10 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 
 class FirebaseUser(BaseModel):
-    uid: Optional[str] = None
+    uid: Optional[str] = None 
     email: EmailStr
-    first_name: str
-    last_name: str
-    npi: str
-    practice_name: str
-    status: str
+    first_name: Optional[str] = None 
+    last_name: Optional[str] = None 
+    npi: Optional[str] = None 
+    practice_name: Optional[str] = None 
+    status: Optional[str] = None 

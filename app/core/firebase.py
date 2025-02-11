@@ -47,6 +47,11 @@ def get_user_from_firestore(user_id: str):
     user_doc = _firestore_client.collection("users").document(user_id).get()
     return user_doc.to_dict() if user_doc.exists else None
 
+def create_user_in_firestore(user_id: str, update_data: dict):
+    """Updates a Firestore user document."""
+    _firestore_client.collection("users").document(user_id).set(update_data)
+    logger.info(f"🔄 Updated Firestore user: {user_id}")
+
 def update_user_in_firestore(user_id: str, update_data: dict):
     """Updates a Firestore user document."""
     _firestore_client.collection("users").document(user_id).update(update_data)

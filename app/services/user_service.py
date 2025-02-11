@@ -5,6 +5,7 @@ from app.models.firebase_user import FirebaseUser
 from app.models.user import User, UserCreate, UserRole
 from app.core.security import hash_password
 from app.core.firebase import (
+    create_user_in_firestore,
     get_firebase_user,
     get_firestore_client,
     get_user_from_firestore,
@@ -68,6 +69,7 @@ def get_user_by_email(email: str) -> Optional[FirebaseUser]:
 
         # Fetch user details from Firestore
         firestore_user = get_user_from_firestore(firebase_user.uid)
+
         if not firestore_user:
             return None
 
@@ -77,14 +79,11 @@ def get_user_by_email(email: str) -> Optional[FirebaseUser]:
         raise e
 
 # Firebase: List users with pagination
-def list_users(page: int = 1, limit: int = 30, last_uid: str = None) -> List[FirebaseUser]:
+def list_users(limit: int = 30, last_uid: str = None):
     try:
         users_data = get_users_from_firestore(limit=limit, last_uid=last_uid)
         
-        # Convert Firestore user data to FirebaseUser schema
-        users = [FirebaseUser(**user) for user in users_data]
-
-        return users
+        return users_data
     except Exception as e:
         logger.exception("❌ Error fetching users")
         raise e
@@ -93,12 +92,12 @@ def list_users(page: int = 1, limit: int = 30, last_uid: str = None) -> List[Fir
 def create_user_in_firebase(user_data: FirebaseUser):
     try:
         # Create user in Firebase Authentication
-        user = auth.create_user(email=user_data.email, password=user_data.password)
-
+        user = auth.create_user(email=user_data.email)
+        logger.info("Created auth user")
         user_data = user_data.model_copy(update={"uid": user.uid, "status": "pending"})
 
         # Store user details in Firestore
-        update_user_in_firestore(user.uid, user_data.dict())
+        create_user_in_firestore(user.uid, user_data.model_dump())
 
         logger.info(f"✅ User created in Firebase: {user_data.email}")
         return user.uid
@@ -109,14 +108,25 @@ def create_user_in_firebase(user_data: FirebaseUser):
 # Firebase: Update user details
 def update_user_in_firebase(user_id: str, update_data: dict):
     try:
-        # Update user in Firebase Authentication
-        auth.update_user(user_id, **update_data)
+        # Extract email if it needs updating in Firebase Authentication
+        firebase_update_data = {}
+        if "email" in update_data:
+            firebase_update_data["email"] = update_data["email"]
+        
+        # Update email in Firebase Authentication (if present)
+        if firebase_update_data:
+            auth.update_user(user_id, **firebase_update_data)
 
-        # Update user details in Firestore
-        update_user_in_firestore(user_id, update_data)
+        # Update remaining details in Firestore (if present)
+        if update_data:
+            update_user_in_firestore(user_id, update_data)
 
-        # Fetch updated user data
-        updated_user = get_firebase_user(user_id)
+        user_doc = get_user_from_firestore(user_id)
+
+        if not user_doc or "email" not in user_doc:
+            raise ValueError(f"❌ No email found for user {user_id} in Firestore")
+
+        updated_user = get_firebase_user(user_doc["email"])
 
         return updated_user
     except Exception as e:

@@ -1,0 +1,25 @@
+meta {
+  name: approve_user
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://127.0.0.1:8000/api/v1/users/zp9k1UzbJ0cdgfficfgc9r3hbJ43/approve
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImV4cCI6MTczOTMwOTA4MX0.Fj754Qo6J9WKhJpfzSz4vIpy-EkLZZwngNm2aGqip4k
+}
+
+body:json {
+  {
+    "email": "varad.gcs@gmail.com",
+    "first_name": "Varad",
+    "last_name": "Joshi",
+    "npi": "0000000000",
+    "practice_name": "Varad"
+  }
+}
