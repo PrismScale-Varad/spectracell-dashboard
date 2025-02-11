@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / package files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs and local runtime files
+logs/
+*.log
+*.out
+*.pid
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.backup
+firebase-adminsdk*.json  # Firebase credentials
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python dependencies
+pip-log.txt
+pip-wheel-metadata/
+
+# Docker
+docker-compose.override.yml
