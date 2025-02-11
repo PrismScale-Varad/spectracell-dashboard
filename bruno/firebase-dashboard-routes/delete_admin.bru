@@ -1,23 +1,21 @@
 meta {
   name: delete_admin
   type: http
-  seq: 13
+  seq: 15
 }
 
 delete {
-  url: http://127.0.0.1:8000/api/v1/admin/superadmin@example.com
-  body: json
+  url: http://127.0.0.1:8000/api/v1/admin/admin@example.com
+  body: none
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImV4cCI6MTczOTMwNTQ1MX0.3BEXiBBNege8wk8GrNIVfnWxM7peL2bg0nMM624p9AQ
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzM5MzE3ODA2fQ.7Gt-3phF9TPhrJsnUebApWYAM-JsJzqz6111UlI4jsQ
 }
 
 body:json {
   {
-    "email": "admin@example.com",
-    "password": "securepassword123",
-    "role": "admin"
+    "email": "admin@example.com"
   }
 }

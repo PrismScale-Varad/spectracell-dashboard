@@ -1,13 +1,10 @@
 import jwt
 from datetime import datetime, timedelta
-from app.core.config import settings, pwd_context  # ✅ Import `pwd_context` from config
+from app.core.config import settings, pwd_context
 from functools import wraps
-from fastapi import Request, HTTPException, Depends
-from app.core.database import get_db
+from fastapi import Request, HTTPException
+
 from app.models.user import UserRole
-from sqlalchemy.orm import Session
-from app.core.database import get_db
-from app.core.config import logger
 
 def hash_password(password: str) -> str:
     """Hashes a password using bcrypt."""
@@ -34,6 +31,26 @@ def verify_access_token(token: str):
         return None  # Token expired
     except jwt.InvalidTokenError:
         return None  # Invalid token
+
+def generate_password_reset_token(email: str) -> str:
+    """
+    Generates a password reset token using JWT, valid for 24 hours.
+    """
+    expires_delta = timedelta(hours=24)  # 24-hour expiry
+    payload = {"sub": email, "exp": datetime.utcnow() + expires_delta}
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+def verify_password_reset_token(token: str) -> str:
+    """
+    Verifies the password reset token and returns the email if valid.
+    """
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        return payload.get("sub")  # Extract email
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=400, detail="Reset token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=400, detail="Invalid reset token")
 
 def require_superadmin(func):
     @wraps(func)

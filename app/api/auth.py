@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.user import User, UserLogin, TokenResponse, UserResponse
 from app.services.auth_service import authenticate_admin, generate_admin_access_token
+from app.services.user_service import send_admin_reset_password_email, set_admin_password
 from app.core.security import verify_access_token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -21,3 +22,15 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
 async def get_current_admin(request: Request):
     """Returns details of the currently logged-in admin based on JWT token."""
     return request.state.user
+
+@router.post("/reset-password", summary="Set password for an admin using a token")
+def set_admin_password_endpoint(
+    db: Session = Depends(get_db),
+    token: str = Body(...),
+    new_password: str = Body(...)
+):
+    return set_admin_password(db, token, new_password)
+
+@router.post("/reset-password/request", summary="Request password reset")
+def request_password_reset(email: str = Body(...), db: Session = Depends(get_db)):
+    return send_admin_reset_password_email(db, email)

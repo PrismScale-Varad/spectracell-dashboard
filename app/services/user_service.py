@@ -1,9 +1,12 @@
+from datetime import timedelta
 from typing import List, Optional
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from firebase_admin import auth
+from app.core.security import create_access_token, hash_password, verify_access_token, verify_password_reset_token
 from app.models.firebase_user import FirebaseUser
 from app.models.user import User, UserCreate, UserRole
-from app.core.security import hash_password
+from app.core.security import generate_password_reset_token
 from app.core.firebase import (
     create_user_in_firestore,
     get_firebase_user,
@@ -13,7 +16,8 @@ from app.core.firebase import (
     delete_user_from_firestore,
     get_users_from_firestore,
 )
-from app.core.config import logger
+from app.core.config import settings, logger
+from app.services.email_service import send_email
 
 db_firestore = get_firestore_client()
 
@@ -27,20 +31,76 @@ def create_admin(db: Session, user_data: UserCreate):
         raise ValueError("Invalid role. Only 'admin' or 'superadmin' are allowed.")
 
     try:
-        hashed_pw = hash_password(user_data.password)
         db_user = User(
             email=user_data.email,
-            hashed_password=hashed_pw
+            hashed_password=user_data.email,
+            role = user_data.role
         )
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
+
+        # Generate a password reset link
+        reset_token = generate_password_reset_token(db_user.email)
+        reset_link = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
+        send_email(
+            recipient=db_user.email,
+            subject="Set Up Your Admin Account",
+            body=f"""
+            <p>Hello {db_user.role},</p>
+            <p>Your admin account has been created. Please set your password using the link below:</p>
+            <a href="{reset_link}">Set Password</a>
+            <p>This link will expire in 24 hours.</p>
+            """
+        )
+
         logger.info(f"✅ Admin created: {user_data.email}")
         return db_user
     except Exception as e:
         db.rollback()
         logger.exception("❌ Error creating admin")
         raise e
+
+def set_admin_password(db: Session, token: str, new_password: str) -> User:
+    """Updates an admin's password if a valid token is provided."""
+    email = verify_password_reset_token(token)
+    
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid token")
+
+    admin = get_admin_by_email(db, email)
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+
+    # Hash and update password
+    admin.hashed_password = hash_password(new_password)
+    db.commit()
+    db.refresh(admin)
+    
+    return admin
+
+def send_admin_reset_password_email(db: Session, email: str):
+    """Sends a password reset email to the admin."""
+    admin = get_admin_by_email(db, email)
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+
+    # Generate a reset token
+    reset_token = generate_password_reset_token(email)
+
+    reset_link = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
+
+    # Send email
+    subject = "Password Reset Request"
+    body = f"""
+    <p>Hello,</p>
+    <p>You requested a password reset. Click the link below to set a new password:</p>
+    <p><a href="{reset_link}">{reset_link}</a></p>
+    <p>If you didn't request this, please ignore this email.</p>
+    """
+    
+    send_email(email, subject, body)
+    return {"message": "Password reset email sent"}
 
 # Neon PostgreSQL: Delete dashboard admin by email
 def delete_admin_by_email(db: Session, email: str):
@@ -94,10 +154,17 @@ def create_user_in_firebase(user_data: FirebaseUser):
         # Create user in Firebase Authentication
         user = auth.create_user(email=user_data.email)
         logger.info("Created auth user")
-        user_data = user_data.model_copy(update={"uid": user.uid, "status": "pending"})
+        user_data = user_data.model_copy(update={"uid": user.uid, "status": "approved"})
 
         # Store user details in Firestore
         create_user_in_firestore(user.uid, user_data.model_dump())
+
+        # Send a password reset link
+        reset_link = auth.generate_password_reset_link(user_data.email)
+        recipient = user_data.email
+        subject = "Welcome to Spectracell"
+        body = f"<h1>Hello, User!</h1><p>Thank you for signing up.</p><p>Please set a password to continue {reset_link}</p>"
+        send_email(recipient, subject, body)
 
         logger.info(f"✅ User created in Firebase: {user_data.email}")
         return user.uid
@@ -178,6 +245,10 @@ def hold_user(user_id: str):
 def generate_password_reset_link(email: str):
     try:
         reset_link = auth.generate_password_reset_link(email)
+        recipient = email
+        subject = "Reset your Spectracell password"
+        body = f"<h1>Hello, User!</h1><p>We recieved a password reset request.</p><p>Follow this link to reset your password: {reset_link}</p><p>If you did not request for a password reset, kindly ignore this email</p>"
+        send_email(recipient, subject, body)
         logger.info(f"📩 Password reset link generated for: {email}")
         return reset_link
     except Exception as e:

@@ -1,9 +1,9 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.user import User, UserCreate, UserResponse
-from app.services.user_service import get_admin_by_email, create_admin, delete_admin_by_email
+from app.services.user_service import send_admin_reset_password_email, set_admin_password, get_admin_by_email, create_admin, delete_admin_by_email
 from app.core.config import logger
 from app.core.security import require_superadmin
 
@@ -19,7 +19,6 @@ def get_all_admins(request: Request, db: Session = Depends(get_db)):
     return admins
 
 @router.post("/", response_model=UserResponse, summary="Create a new dashboard admin")
-@require_superadmin
 def add_admin(request: Request, user_data: UserCreate, db: Session = Depends(get_db)):
     existing_admin = get_admin_by_email(db, user_data.email)
     if existing_admin:

@@ -5,18 +5,18 @@ meta {
 }
 
 post {
-  url: http://127.0.0.1:8000/api/v1/admin
+  url: http://127.0.0.1:8000/api/v1/admin/
   body: json
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluQGV4YW1wbGUuY29tIiwiZXhwIjoxNzM5MzA1Njg2fQ.l15fWvwc2B4u8-VEjUqJ0bM64dcRtYd1kiPs4mQtufc
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzM5MzE3ODA2fQ.7Gt-3phF9TPhrJsnUebApWYAM-JsJzqz6111UlI4jsQ
 }
 
 body:json {
   {
-    "email": "admin2@example.com",
-    "password": "securepassword123"
+    "email": "varad@prismscale.com",
+    "role":"superadmin"
   }
 }

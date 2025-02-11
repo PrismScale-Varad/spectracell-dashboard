@@ -24,8 +24,9 @@ class UserBase(BaseModel):
     email: EmailStr
     role: UserRole
 
-class UserCreate(UserBase):
-    password: str
+class UserCreate(BaseModel):
+    email: EmailStr
+    role: UserRole
 
 class UserResponse(UserBase):
     id: int

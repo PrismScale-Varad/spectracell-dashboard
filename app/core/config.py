@@ -14,11 +14,13 @@ class Settings(BaseSettings):
 
     # JWT settings
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your_secret_key_here")
+    SECURITY_PASSWORD_SALT: str = os.getenv("SALT", "your_salt_here")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
 
     # CORS settings
     BACKEND_CORS_ORIGINS: list[str] = os.getenv("BACKEND_CORS_ORIGINS", "*").split(",")
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "localhost:8000")
 
     # Firebase settings (if applicable)
     FIREBASE_CREDENTIALS_PATH: str = os.getenv("FIREBASE_CREDENTIALS_PATH", "app/core/firebase-adminsdk.json")
@@ -29,7 +31,8 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = os.getenv("ENV", "DEVELOPMENT").upper()
 
     # RESEND
-    RESEND_API_KEY: str = os.getenv("RESEND_KEY")
+    SENDER_ADDRESS: str = os.getenv("FROM_SENDER_ADDRESS")
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY")
 
 # Initialize settings
 settings = Settings()
