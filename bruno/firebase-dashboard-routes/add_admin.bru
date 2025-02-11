@@ -1,19 +1,22 @@
 meta {
   name: add_admin
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
   url: http://127.0.0.1:8000/api/v1/admin
   body: json
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluQGV4YW1wbGUuY29tIiwiZXhwIjoxNzM5MzA1Njg2fQ.l15fWvwc2B4u8-VEjUqJ0bM64dcRtYd1kiPs4mQtufc
 }
 
 body:json {
   {
-    "email": "admin@example.com",
+    "email": "admin2@example.com",
     "password": "securepassword123",
-    "role": "admin"
   }
 }

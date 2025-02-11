@@ -5,9 +5,13 @@ meta {
 }
 
 delete {
-  url: http://127.0.0.1:8000/api/v1/admin/admin@example.com
+  url: http://127.0.0.1:8000/api/v1/admin/superadmin@example.com
   body: json
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImV4cCI6MTczOTMwNTQ1MX0.3BEXiBBNege8wk8GrNIVfnWxM7peL2bg0nMM624p9AQ
 }
 
 body:json {

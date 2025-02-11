@@ -1,20 +1,23 @@
 meta {
-  name: list_users
+  name: get_admins
   type: http
-  seq: 1
+  seq: 4
 }
 
 get {
-  url: http://127.0.0.1:8000/api/v1/users?limit=100&last_uid=1LgUes9eqvRrK5fCupxd7XDOhjs1
-  body: none
+  url: http://127.0.0.1:8000/api/v1/admin
+  body: json
   auth: bearer
-}
-
-params:query {
-  limit: 100
-  last_uid: 1LgUes9eqvRrK5fCupxd7XDOhjs1
 }
 
 auth:bearer {
   token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImV4cCI6MTczOTMwNTQ1MX0.3BEXiBBNege8wk8GrNIVfnWxM7peL2bg0nMM624p9AQ
+}
+
+body:json {
+  {
+    "email": "admin@example.com",
+    "password": "securepassword123",
+    "role": "admin"
+  }
 }

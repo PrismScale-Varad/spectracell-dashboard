@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.models.user import User, TokenResponse, UserResponse
+from app.models.user import User, UserLogin, TokenResponse, UserResponse
 from app.services.auth_service import authenticate_admin, generate_admin_access_token
 from app.core.security import verify_access_token
 
@@ -18,17 +18,6 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me", response_model=UserResponse, summary="Get logged-in admin details")
-def get_current_admin(token: str, db: Session = Depends(get_db)):
+async def get_current_admin(request: Request):
     """Returns details of the currently logged-in admin based on JWT token."""
-    payload = verify_access_token(token)
-    
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    
-    email = payload.get("sub")
-    admin = db.query(User).filter(User.email == email).first()
-    
-    if not admin:
-        raise HTTPException(status_code=404, detail="Admin not found")
-    
-    return admin  # Returns admin details as `UserResponse`
+    return request.state.user

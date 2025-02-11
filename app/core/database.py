@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from app.core.config import settings, logger  # Import logger from config
+from contextlib import contextmanager
 
 # Use environment variable for database URL
 DATABASE_URL = settings.DATABASE_URL
@@ -19,7 +20,17 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     logger.info("✅ Successfully connected to PostgreSQL and initialized database.")
 
+
 def get_db():
+    """Dependency to get a database session."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        
+@contextmanager
+def get_db_context():
     """Dependency to get a database session."""
     db = SessionLocal()
     try:

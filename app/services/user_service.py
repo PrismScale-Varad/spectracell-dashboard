@@ -25,8 +25,7 @@ def create_admin(db: Session, user_data: UserCreate):
         hashed_pw = hash_password(user_data.password)
         db_user = User(
             email=user_data.email,
-            hashed_password=hashed_pw,
-            role=user_data.role
+            hashed_password=hashed_pw
         )
         db.add(db_user)
         db.commit()

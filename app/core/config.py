@@ -1,9 +1,12 @@
 import os
 import logging
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from passlib.context import CryptContext
 
 class Settings(BaseSettings):
+    # API Route prefix
+    prefix: str="/api/v1"
+
     # Database settings
     DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/mydatabase")
 
@@ -16,10 +19,12 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: list[str] = os.getenv("BACKEND_CORS_ORIGINS", "*").split(",")
 
     # Firebase settings (if applicable)
-    FIREBASE_CREDENTIALS_PATH: str = os.getenv("FIREBASE_CREDENTIALS_PATH", "")
+    FIREBASE_CREDENTIALS_PATH: str = os.getenv("FIREBASE_CREDENTIALS_PATH", "app/core/firebase-adminsdk.json")
 
     # Logger settings
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO").upper()
+
+    ENVIRONMENT: str = os.getenv("ENV", "DEVELOPMENT").upper()
 
     class Config:
         env_file = ".env"  # Load environment variables from .env file if present

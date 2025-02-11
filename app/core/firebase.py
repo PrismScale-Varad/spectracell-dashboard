@@ -1,10 +1,10 @@
 import firebase_admin
 from firebase_admin import credentials, auth, firestore
 import os
-from app.core.config import settings, logger  # Use centralized logger
+from app.core.config import settings, logger
 
 # Load Firebase credentials from environment variables
-FIREBASE_CREDENTIALS = os.getenv("FIREBASE_CREDENTIALS", "app/core/firebase-adminsdk.json")
+FIREBASE_CREDENTIALS = settings.FIREBASE_CREDENTIALS_PATH
 
 # Initialize Firebase only once
 if not firebase_admin._apps:
