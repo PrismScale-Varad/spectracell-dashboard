@@ -5,10 +5,12 @@ from pydantic import BaseModel, EmailStr
 
 Base = declarative_base()
 
+# User roles
 class UserRole(enum.Enum):
     ADMIN = "admin"
     SUPERADMIN = "superadmin"
 
+# Database model
 class User(Base):
     __tablename__ = "users"
 
@@ -30,3 +32,13 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
+
+class UserLogin(BaseModel):
+    """Schema for admin login request."""
+    email: EmailStr
+    password: str
+
+class TokenResponse(BaseModel):
+    """Schema for token response."""
+    access_token: str
+    token_type: str = "bearer"

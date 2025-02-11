@@ -1,6 +1,7 @@
 import os
 import logging
 from pydantic import BaseSettings
+from passlib.context import CryptContext
 
 class Settings(BaseSettings):
     # Database settings
@@ -25,6 +26,9 @@ class Settings(BaseSettings):
 
 # Initialize settings
 settings = Settings()
+
+# ✅ Common password hashing context
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Initialize logger
 logging.basicConfig(
