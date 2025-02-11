@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "localhost:8000")
 
     # Firebase settings (if applicable)
-    FIREBASE_CREDENTIALS_PATH: str = os.getenv("FIREBASE_CREDENTIALS_PATH", "app/core/firebase-adminsdk.json")
+    FIREBASE_CREDENTIALS: str = os.getenv("FIREBASE_CREDENTIALS")
 
     # Logger settings
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO").upper()

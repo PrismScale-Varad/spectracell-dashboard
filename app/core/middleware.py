@@ -10,7 +10,7 @@ from app.core.config import logger
 class AuthMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
         super().__init__(app)
-        self.exclude_routes = {"/api/v1/auth/login", "/api/v1/auth/reset-password", "/api/v1/auth/reset-password/request", "/docs", "/openapi.json"}  # Excluded routes (adjust as needed)
+        self.exclude_routes = {"/api/v1/auth/login", "/api/v1/auth/reset-password", "/api/v1/auth/reset-password/request", "/docs", "/redoc", "/openapi.json"}  # Excluded routes (adjust as needed)
 
     async def dispatch(self, request: Request, call_next):
 

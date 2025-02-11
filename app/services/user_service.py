@@ -27,14 +27,10 @@ def get_admin_by_email(db: Session, email: str):
 
 # Neon PostgreSQL: Create dashboard admin
 def create_admin(db: Session, user_data: UserCreate):
-    if user_data.role not in [UserRole.ADMIN, UserRole.SUPERADMIN]:
-        raise ValueError("Invalid role. Only 'admin' or 'superadmin' are allowed.")
-
     try:
         db_user = User(
             email=user_data.email,
             hashed_password=user_data.email,
-            role = user_data.role
         )
         db.add(db_user)
         db.commit()
