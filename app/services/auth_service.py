@@ -1,5 +1,4 @@
 from datetime import timedelta
-from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.core.security import verify_password, create_access_token, hash_password, verify_access_token
