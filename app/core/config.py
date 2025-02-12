@@ -14,12 +14,12 @@ class Settings(BaseSettings):
 
     # JWT settings
     SECRET_KEY: str = os.getenv("SECRET_KEY", "secret")
-    SECURITY_PASSWORD_SALT: str = os.getenv("SALT", "salt")
+    SECURITY_PASSWORD_SALT: str = os.getenv("SECURITY_PASSWORD_SALT", "salt")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
 
     # CORS settings
-    BACKEND_CORS_ORIGINS: list[str] = os.getenv("BACKEND_CORS_ORIGINS", "*").split(",")
+    BACKEND_CORS_ORIGINS: list[str] = ['*']
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "localhost:8000")
 
     # Firebase settings (if applicable)
@@ -48,3 +48,13 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+EXCLUDED_ROUTES = {
+    "/",
+    "/api/v1/auth/login",
+    "/api/v1/auth/reset-password",
+    "/api/v1/auth/reset-password/request",
+    "/docs",
+    "/redoc",
+    "/openapi.json",
+}

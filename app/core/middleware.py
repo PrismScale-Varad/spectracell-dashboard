@@ -5,15 +5,14 @@ from sqlalchemy.orm import Session
 from app.core.security import verify_access_token
 from app.core.database import get_db_context
 from app.models.user import User
-from app.core.config import logger
+from app.core.config import EXCLUDED_ROUTES, logger
 
 class AuthMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
         super().__init__(app)
-        self.exclude_routes = {"/api/v1/auth/login", "/api/v1/auth/reset-password", "/api/v1/auth/reset-password/request", "/docs", "/redoc", "/openapi.json"}  # Excluded routes (adjust as needed)
+        self.exclude_routes = EXCLUDED_ROUTES
 
     async def dispatch(self, request: Request, call_next):
-
         if request.method == "OPTIONS":
             return await call_next(request)
 
