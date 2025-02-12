@@ -30,3 +30,7 @@ def root():
         "message": "API is running!",
         "environment": settings.ENVIRONMENT
     }
+
+@app.head("/")
+def root():
+    return {}
