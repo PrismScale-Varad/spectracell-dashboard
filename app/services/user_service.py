@@ -137,10 +137,9 @@ def get_user_by_email(email: str) -> Optional[FirebaseUser]:
         raise e
 
 # Firebase: List users with pagination
-def list_users(limit: int = 30, last_uid: str = None):
+def list_users(limit: int = 30, last_uid: str = None, status: str = None):
     try:
-        users_data = get_users_from_firestore(limit=limit, last_uid=last_uid)
-        
+        users_data = get_users_from_firestore(limit=limit, last_uid=last_uid, status=status)
         return users_data
     except Exception as e:
         logger.exception("❌ Error fetching users")
@@ -152,7 +151,7 @@ def create_user_in_firebase(user_data: FirebaseUser):
         # Create user in Firebase Authentication
         user = auth.create_user(email=user_data.email)
         logger.info("Created auth user")
-        user_data = user_data.model_copy(update={"uid": user.uid, "status": "approved"})
+        user_data = user_data.model_copy(update={"uid": user.uid, "status": "active"})
 
         # Store user details in Firestore
         create_user_in_firestore(user.uid, user_data.model_dump())
@@ -218,7 +217,7 @@ def approve_user(user_id: str):
         auth.update_user(user_id, disabled=False)
 
         # Update Firestore to reflect "approved" status
-        update_user_in_firestore(user_id, {"status": "approved"})
+        update_user_in_firestore(user_id, {"status": "active"})
 
         logger.info(f"✅ User approved and re-enabled: {user_id}")
         return {"message": "User approved and re-enabled"}

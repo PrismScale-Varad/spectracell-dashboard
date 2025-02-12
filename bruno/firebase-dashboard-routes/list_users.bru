@@ -5,16 +5,17 @@ meta {
 }
 
 get {
-  url: http://127.0.0.1:8000/api/v1/users?limit=30
+  url: http://127.0.0.1:8000/api/v1/users?limit=100&status=on_hold
   body: none
   auth: bearer
 }
 
 params:query {
-  limit: 30
+  limit: 100
+  status: on_hold
   ~last_uid: 1LgUes9eqvRrK5fCupxd7XDOhjs1
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzM5MzE3ODA2fQ.7Gt-3phF9TPhrJsnUebApWYAM-JsJzqz6111UlI4jsQ
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzM5NDA1OTAzfQ.bTB4IY6MnGU2N9aL_ng9cyb9nFgSDumnPVf9HSpgvyo
 }
