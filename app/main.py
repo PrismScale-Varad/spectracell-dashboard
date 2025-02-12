@@ -28,5 +28,5 @@ app.include_router(users.router, prefix=prefix)
 def root():
     return {
         "message": "API is running!",
-        "environment": settings.ENVIRONMENT  # Example check
+        "environment": settings.ENVIRONMENT
     }

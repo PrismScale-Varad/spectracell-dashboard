@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/mydatabase")
 
     # JWT settings
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your_secret_key_here")
-    SECURITY_PASSWORD_SALT: str = os.getenv("SALT", "your_salt_here")
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "secret")
+    SECURITY_PASSWORD_SALT: str = os.getenv("SALT", "salt")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
 
