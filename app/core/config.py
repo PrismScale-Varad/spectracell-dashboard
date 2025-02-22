@@ -19,8 +19,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
 
     # CORS settings
-    BACKEND_CORS_ORIGINS = os.getenv("BACKEND_CORS_ORIGINS", "http://localhost:3000").split(",")
-    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000")
+    BACKEND_CORS_ORIGINS: list[str] = ['localhost:3000']
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "localhost:3000")
 
     # Firebase settings (if applicable)
     FIREBASE_CREDENTIALS: str = os.getenv("FIREBASE_CREDENTIALS")
