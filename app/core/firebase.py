@@ -9,7 +9,7 @@ FIREBASE_CREDENTIALS = settings.FIREBASE_CREDENTIALS
 
 # Initialize Firebase only once
 if not firebase_admin._apps:
-    cred = credentials.Certificate(json.loads(FIREBASE_CREDENTIALS))
+    cred = credentials.Certificate(FIREBASE_CREDENTIALS)
     firebase_admin.initialize_app(cred)
     logger.info("✅ Successfully connected to Firebase.")
 
