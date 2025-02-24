@@ -10,6 +10,7 @@ from app.core.security import generate_password_reset_token
 from app.core.firebase import (
     create_user_in_firestore,
     get_firebase_user,
+    get_firebase_user_by_uid,
     get_firestore_client,
     get_user_from_firestore,
     update_user_in_firestore,
@@ -134,6 +135,25 @@ def get_user_by_email(email: str) -> Optional[FirebaseUser]:
         return FirebaseUser(**firestore_user)
     except Exception as e:
         logger.exception(f"❌ Error fetching user details for email: {email}")
+        raise e
+
+def get_user_by_uid(uid: str) -> Optional[FirebaseUser]:
+    """Retrieve a user's details using their UID from Firebase Authentication and Firestore."""
+    try:
+        # Fetch user from Firebase Authentication using UID
+        firebase_user = get_firebase_user_by_uid(uid)
+        if not firebase_user:
+            return None
+
+        # Fetch user details from Firestore
+        firestore_user = get_user_from_firestore(firebase_user.uid)
+
+        if not firestore_user:
+            return None
+
+        return FirebaseUser(**firestore_user)
+    except Exception as e:
+        logger.exception(f"❌ Error fetching user details for UID: {uid}")
         raise e
 
 # Firebase: List users with pagination
