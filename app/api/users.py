@@ -3,6 +3,7 @@ from app.services.user_service import (
     list_users,
     create_user_in_firebase,
     get_user_by_email,
+    get_user_by_uid,
     update_user_in_firebase,
     delete_user_in_firebase,
     approve_user,
@@ -30,6 +31,13 @@ def get_users(
 @router.get("/email/{email}", summary="Get user details by email")
 def get_user(email: str):
     user = get_user_by_email(email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@router.get("/{user_id}", summary="Get user details by UID")
+def get_user_by_uid_endpoint(user_id: str):
+    user = get_user_by_uid(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
