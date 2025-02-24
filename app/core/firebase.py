@@ -29,7 +29,14 @@ def get_firebase_user(email: str):
         return auth.get_user_by_email(email)
     except firebase_admin.auth.UserNotFoundError:
         return None
-
+        
+def get_firebase_user_by_uid(uid: str):
+    """Retrieve a Firebase user by UID."""
+    try:
+        return auth.get_user(uid)
+    except firebase_admin.auth.UserNotFoundError:
+        return None
+        
 def create_firebase_user(email: str, password: str):
     """Creates a new Firebase user."""
     user = auth.create_user(email=email, password=password)
