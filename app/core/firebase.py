@@ -78,42 +78,17 @@ def get_users_from_firestore(limit: int = 10, last_uid: str = None, status: str 
     users = []
     last_doc_id = None  # Track last document for pagination
 
-    if status == "active":
-        # Get users where status is NOT "on_hold"
-        users_ref_active = db.collection("users").where("status", "!=", "on_hold").order_by("uid").limit(limit)
+    users_ref = db.collection("users").order_by("uid").limit(limit)
 
-        # Get all users and filter out those where "status" is missing
-        users_ref_missing = db.collection("users").order_by("uid").limit(limit)  
+    if status:
+        users_ref = db.collection("users").where("status", "==", status).order_by("uid").limit(limit)
 
-        if last_uid:
-            last_doc = db.collection("users").document(last_uid).get()
-            if last_doc.exists:
-                users_ref_active = users_ref_active.start_after(last_doc)
-                users_ref_missing = users_ref_missing.start_after(last_doc)
+    if last_uid:
+        last_doc = db.collection("users").document(last_uid).get()
+        if last_doc.exists:
+            users_ref = users_ref.start_after(last_doc)
 
-        # Fetch both sets of users
-        users_stream_active = list(users_ref_active.stream())
-        users_stream_missing = [
-            doc for doc in users_ref_missing.stream() if "status" not in doc.to_dict()
-        ]
-
-        users_stream = (users_stream_active + users_stream_missing)[:limit]  # Merge both results
-    elif status == "on_hold":
-        users_ref = db.collection("users").where("status", "==", "on_hold").order_by("uid").limit(limit)
-
-        if last_uid:
-            last_doc = db.collection("users").document(last_uid).get()
-            if last_doc.exists:
-                users_ref = users_ref.start_after(last_doc)
-
-        users_stream = users_ref.stream()
-    else:
-        users_ref = db.collection("users").order_by("uid").limit(limit)
-        if last_uid:
-            last_doc = db.collection("users").document(last_uid).get()
-            if last_doc.exists:
-                users_ref = users_ref.start_after(last_doc)
-        users_stream = users_ref.stream()
+    users_stream = users_ref.stream()
 
     for user_doc in users_stream:
         user_data = user_doc.to_dict()
@@ -128,4 +103,3 @@ def get_users_from_firestore(limit: int = 10, last_uid: str = None, status: str 
 
     logger.info(f"📜 Retrieved {len(users)} users from Firestore with status={status or 'any'}.")
     return {"users": users, "next_page_uid": last_doc_id}
-
