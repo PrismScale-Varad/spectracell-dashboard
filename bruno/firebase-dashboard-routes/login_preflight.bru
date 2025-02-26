@@ -5,15 +5,15 @@ meta {
 }
 
 options {
-  url: http://localhost:8000//api/v1/auth/login
-  body: json
+  url: https://spectracell-dashboard.onrender.com/api/v1/auth/login
+  body: none
   auth: none
 }
 
 headers {
   Access-Control-Request-Method: POST
   Access-Control-Request-Headers: content-type, authorization
-  Origin: localhost:3000
+  Origin: http://localhost:3000
 }
 
 body:json {

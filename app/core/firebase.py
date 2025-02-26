@@ -97,7 +97,7 @@ def get_users_from_firestore(limit: int = 10, last_uid: str = None, status: str 
             doc for doc in users_ref_missing.stream() if "status" not in doc.to_dict()
         ]
 
-        users_stream = users_stream_active + users_stream_missing  # Merge both results
+        users_stream = (users_stream_active + users_stream_missing)[:limit]  # Merge both results
     elif status == "on_hold":
         users_ref = db.collection("users").where("status", "==", "on_hold").order_by("uid").limit(limit)
 

@@ -1,23 +1,15 @@
 meta {
   name: get_admins
   type: http
-  seq: 15
+  seq: 17
 }
 
 get {
   url: http://127.0.0.1:8000/api/v1/admin/
-  body: json
+  body: none
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzM5MzIwMjc5fQ.HXlXoV3wYwesHeSQ7CQq0YunOwZIAVySN1svkhvrB18
-}
-
-body:json {
-  {
-    "email": "admin@example.com",
-    "password": "securepassword123",
-    "role": "admin"
-  }
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzQwNTU1NTY0fQ._G-iJG8J7ydSiSdYDJBtU4JpeQ5vTzSyRT9do2VVXOY
 }

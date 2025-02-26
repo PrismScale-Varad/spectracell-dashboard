@@ -159,7 +159,10 @@ def get_user_by_uid(uid: str) -> Optional[FirebaseUser]:
 # Firebase: List users with pagination
 def list_users(limit: int = 30, last_uid: str = None, status: str = None):
     try:
-        users_data = get_users_from_firestore(limit=limit, last_uid=last_uid, status=status)
+        if status=="all":
+            users_data = get_users_from_firestore(limit=limit, last_uid=last_uid, status=None)
+        else:
+            users_data = get_users_from_firestore(limit=limit, last_uid=last_uid, status=status)
         return users_data
     except Exception as e:
         logger.exception("❌ Error fetching users")
