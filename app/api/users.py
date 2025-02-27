@@ -21,14 +21,21 @@ def get_users(
     limit: int = Query(10, ge=1, le=100, description="Number of users per page"),
     last_uid: str = Query(None, description="UID of the last user from the previous page for pagination"),
     status: str = Query(None, regex="^(active|on_hold|all)$", description="Filter users by status (active or on_hold)"),
+    email: str = None,
 ):
     try:
-        return list_users(limit=limit, last_uid=last_uid, status=status)
+        if email:
+            user = get_user_by_email(email)
+            if not user:
+                raise HTTPException(status_code=404, detail="User not found")
+            return user
+        else:
+            return list_users(limit=limit, last_uid=last_uid, status=status)
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
 
 # Get user by email
-@router.get("/email/{email}", summary="Get user details by email")
+@router.get("/{email}", summary="Get user details by email")
 def get_user(email: str):
     user = get_user_by_email(email)
     if not user:

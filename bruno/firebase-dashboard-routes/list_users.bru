@@ -5,17 +5,18 @@ meta {
 }
 
 get {
-  url: http://127.0.0.1:8000/api/v1/users?limit=3&last_uid=1MKeNfVNPTdlLj5H14RjEgCq7Y73&status=active
+  url: http://127.0.0.1:8000/api/v1/users?limit=3&email=varad.gcs@gmail.com
   body: none
   auth: bearer
 }
 
 params:query {
   limit: 3
-  last_uid: 1MKeNfVNPTdlLj5H14RjEgCq7Y73
-  status: active
+  email: varad.gcs@gmail.com
+  ~last_uid: 1MKeNfVNPTdlLj5H14RjEgCq7Y73
+  ~status: active
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzQwNTcxMDYxfQ.RGVd9mQX4KRIYPCrAfiTgfCrNyMznMD-9pjZlHOYpSw
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzQwNjM5MDA3fQ.YahtwKrKNjweMvDaYjF8IjQNvPIaZRB5WfAS3f0gVAY
 }
