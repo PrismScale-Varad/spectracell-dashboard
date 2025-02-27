@@ -44,7 +44,7 @@ def create_admin(db: Session, user_data: UserCreate):
             recipient=db_user.email,
             subject="Set Up Your Admin Account",
             body=f"""
-            <p>Hello {db_user.role},</p>
+            <p>Hello!</p>
             <p>Your admin account has been created. Please set your password using the link below:</p>
             <a href="{reset_link}">Set Password</a>
             <p>Reset token: {reset_token}</p>
@@ -86,12 +86,12 @@ def send_admin_reset_password_email(db: Session, email: str):
     # Generate a reset token
     reset_token = generate_password_reset_token(email)
 
-    reset_link = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
+    reset_link = f"{settings.FRONTEND_URL}/auth/reset-password?token={reset_token}"
 
     # Send email
     subject = "Password Reset Request"
     body = f"""
-    <p>Hello,</p>
+    <p>Hello!</p>
     <p>You requested a password reset. Click the link below to set a new password:</p>
     <p><a href="{reset_link}">{reset_link}</a></p>
     <p>Reset token: {reset_token}</p>

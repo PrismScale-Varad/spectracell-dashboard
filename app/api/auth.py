@@ -32,5 +32,8 @@ def set_admin_password_endpoint(
     return set_admin_password(db, token, new_password)
 
 @router.post("/reset-password/request", summary="Request password reset")
-def request_password_reset(email: str = Body(...), db: Session = Depends(get_db)):
-    return send_admin_reset_password_email(db, email)
+def request_password_reset(
+    data: dict = Body(...), 
+    db: Session = Depends(get_db)
+):
+    return send_admin_reset_password_email(db, data["email"])
