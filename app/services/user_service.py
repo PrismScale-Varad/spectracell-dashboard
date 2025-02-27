@@ -118,21 +118,21 @@ def delete_admin_by_email(db: Session, email: str):
         raise e
 
 # Firebase: Get user by email
-def get_user_by_email(email: str) -> Optional[FirebaseUser]:
+def get_user_by_email(email: str) -> dict:
     """Retrieve a user's details using their email from Firebase Authentication and Firestore."""
     try:
         # Fetch user from Firebase Authentication
         firebase_user = get_firebase_user(email)
         if not firebase_user:
-            return None
+            return {"users": []}  # Return empty array if user not found
 
         # Fetch user details from Firestore
         firestore_user = get_user_from_firestore(firebase_user.uid)
 
         if not firestore_user:
-            return None
+            return {"users": []}  # Return empty array if no Firestore data
 
-        return FirebaseUser(**firestore_user)
+        return {"users": [firestore_user]}  # Wrap the result in a list
     except Exception as e:
         logger.exception(f"❌ Error fetching user details for email: {email}")
         raise e

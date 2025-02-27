@@ -5,16 +5,16 @@ meta {
 }
 
 get {
-  url: 127.0.0.1:8000/api/v1/users?limit=3
+  url: 127.0.0.1:8000/api/v1/users?limit=100&status=on_hold
   body: none
   auth: bearer
 }
 
 params:query {
-  limit: 3
+  limit: 100
+  status: on_hold
   ~email: varad.gcs@gmail.com
   ~last_uid: 1MKeNfVNPTdlLj5H14RjEgCq7Y73
-  ~status: active
 }
 
 auth:bearer {
