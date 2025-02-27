@@ -21,7 +21,7 @@ def get_users(
     limit: int = Query(10, ge=1, le=100, description="Number of users per page"),
     last_uid: str = Query(None, description="UID of the last user from the previous page for pagination"),
     status: str = Query(None, regex="^(active|on_hold|all)$", description="Filter users by status (active or on_hold)"),
-    email: str = None,
+    email: str = Query(None, regex=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", description="User's email address"),
 ):
     try:
         if email:
