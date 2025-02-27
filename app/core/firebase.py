@@ -71,9 +71,8 @@ def delete_user_from_firestore(user_id: str):
     logger.info(f"🗑️ Firestore user deleted: {user_id}")
 
 # ---------------- PAGINATED LIST USERS ----------------
-
 def get_users_from_firestore(limit: int = 10, last_uid: str = None, status: str = None):
-    """Retrieve a paginated list of users from Firestore with optional status filtering."""
+    """Retrieve a paginated list of users from Firestore with optional status filtering and total count."""
     db = get_firestore_client()
     users = []
     last_doc_id = None  # Track last document for pagination
@@ -95,11 +94,25 @@ def get_users_from_firestore(limit: int = 10, last_uid: str = None, status: str 
         users.append({
             "uid": user_data.get("uid", "Unknown"),
             "email": user_data.get("email", "Unknown"),
+            "first_name": user_data.get("first_name", "Unknown"),
+            "last_name": user_data.get("last_name", "Unknown"),
             "practice_name": user_data.get("practice_name", "Unknown"),
             "npi": user_data.get("npi", "Unknown"),
             "status": user_data.get("status", "active")  # Default to "active" if missing
         })
         last_doc_id = user_data.get("uid")  # Store last user's UID for next page
 
-    logger.info(f"📜 Retrieved {len(users)} users from Firestore with status={status or 'any'}.")
-    return {"users": users, "next_page_uid": last_doc_id}
+    # 🔥 Efficient total count using Firestore aggregation query
+    count_query = db.collection("users")
+    if status:
+        count_query = count_query.where("status", "==", status)
+
+    total_users = count_query.count().get()[0][0].value  # Fast aggregation query for counting
+
+    logger.info(f"📜 Retrieved {len(users)} users from Firestore with status={status or 'any'} (Total: {total_users}).")
+
+    return {
+        "users": users,
+        "next_page_uid": last_doc_id,
+        "total_count": total_users
+    }
