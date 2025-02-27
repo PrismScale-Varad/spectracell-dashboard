@@ -5,18 +5,18 @@ meta {
 }
 
 get {
-  url: 127.0.0.1:8000/api/v1/users?limit=100&status=on_hold
+  url: 127.0.0.1:8000/api/v1/users?email
   body: none
   auth: bearer
 }
 
 params:query {
-  limit: 100
-  status: on_hold
-  ~email: varad.gcs@gmail.com
+  email: 
+  ~limit: 100
+  ~status: on_hold
   ~last_uid: 1MKeNfVNPTdlLj5H14RjEgCq7Y73
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzQwNjYwMTA2fQ.AIu7F6DTZmP4Bp8G0Pbju9tUdk4Dp05NPCoi5oIn_UQ
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2YXJhZC5nY3NAZ21haWwuY29tIiwiZXhwIjoxNzQwNzAwMTE0fQ.fNIlEwsR3lKWsyW6eZd5w6tfAj_3gePiMUxMLmT3R64
 }
