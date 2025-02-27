@@ -19,6 +19,7 @@ def get_all_admins(request: Request, db: Session = Depends(get_db)):
     return admins
 
 @router.post("/", response_model=UserResponse, summary="Create a new dashboard admin")
+@require_superadmin
 def add_admin(request: Request, user_data: UserCreate, db: Session = Depends(get_db)):
     existing_admin = get_admin_by_email(db, user_data.email)
     if existing_admin:
