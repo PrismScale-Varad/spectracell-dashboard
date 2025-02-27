@@ -1,18 +1,16 @@
 meta {
-  name: list_users
+  name: get_user_id
   type: http
-  seq: 3
+  seq: 4
 }
 
 get {
-  url: https://spectracell-dashboard.onrender.com/api/v1/users?limit=3&email=varad.gcs@gmail.com
+  url: http://127.0.0.1:8000/api/v1/users/I6s7YWbREST9uemnq1sQkfThbiT2
   body: none
   auth: bearer
 }
 
 params:query {
-  limit: 3
-  email: varad.gcs@gmail.com
   ~last_uid: 1MKeNfVNPTdlLj5H14RjEgCq7Y73
   ~status: active
 }

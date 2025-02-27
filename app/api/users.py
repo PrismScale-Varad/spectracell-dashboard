@@ -35,7 +35,7 @@ def get_users(
         raise HTTPException(status_code=500, detail="Internal server error")
 
 # Get user by email
-@router.get("/{email}", summary="Get user details by email")
+@router.get("/email/{email}", summary="Get user details by email")
 def get_user(email: str):
     user = get_user_by_email(email)
     if not user:
