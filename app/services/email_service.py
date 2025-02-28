@@ -41,7 +41,7 @@ def onboarding_email(provider_name: str, reset_link: str) -> tuple[str, str]:
     <p>This will grant you secure access to order tests, view patient results, and manage your account with ease.</p>
 
     <p>If you have any questions or need assistance, feel free to contact our support team at 
-    <a href="mailto:support@spectracell.com">support@spectracell.com</a> or call us at (123) 456-7890.</p>
+    <a href="mailto:support@spectracell.com">support@spectracell.com</a> or call us at <strong>+1 (713) 621-3101</strong>.</p>
 
     <p>Thank you for partnering with SpectraCell. We look forward to supporting you!</p>
 
@@ -54,13 +54,15 @@ def onboarding_email_admin(email: str, reset_link: str) -> tuple[str, str]:
     """Generates the onboarding email for admins."""
     subject = "Set Up Your Admin Account"
     body = f"""
-    <p>Hello!</p>
+    <p>Hello,</p>
 
-    <p>Your admin account has been created. Please set your password using the link below:</p>
+    <p>Your admin account has been successfully created. To secure your access, please set up your password using the link below:</p>
 
-    <p><a href="{reset_link}"><strong>Set Password</strong></a></p>
+    <p><a href="{reset_link}"><strong>Set Your Password</strong></a></p>
 
-    <p>This link will expire in 24 hours.</p>
+    <p>This link will expire in <strong>24 hours</strong>.</p>
+
+    <p>If you need any assistance, please contact our support team at <a href="mailto:support@spectracell.com">support@spectracell.com</a> or call us at <strong>+1 (713) 621-3101</strong>.</p>
 
     <p>Best regards,<br>The SpectraCell Team</p>
     """
@@ -73,13 +75,15 @@ def reset_password_email(provider_name: str, reset_link: str) -> tuple[str, str]
     body = f"""
     <p>Dear {provider_name},</p>
 
-    <p>We received a password reset request for your account.</p>
+    <p>We received a request to reset your password.</p>
 
-    <p>Follow this link to reset your password:</p>
+    <p>To proceed, click the link below:</p>
 
-    <p><a href="{reset_link}"><strong>Reset Password</strong></a></p>
+    <p><a href="{reset_link}"><strong>Reset Your Password</strong></a></p>
 
-    <p>If you did not request a password reset, kindly ignore this email.</p>
+    <p>If you did not request this change, you can safely ignore this email.</p>
+
+    <p>For any concerns, reach out to our support team at <a href="mailto:support@spectracell.com">support@spectracell.com</a> or call <strong>+1 (713) 621-3101</strong>.</p>
 
     <p>Best regards,<br>The SpectraCell Team</p>
     """
@@ -90,13 +94,15 @@ def reset_password_email_admin(email: str, reset_link: str) -> tuple[str, str]:
     """Generates the password reset email for admins."""
     subject = "Admin Password Reset Request"
     body = f"""
-    <p>Hello!</p>
+    <p>Hello,</p>
 
-    <p>You requested a password reset. Click the link below to set a new password:</p>
+    <p>We received a request to reset your admin account password. Click the link below to set a new password:</p>
 
-    <p><a href="{reset_link}"><strong>Reset Password</strong></a></p>
+    <p><a href="{reset_link}"><strong>Reset Your Password</strong></a></p>
 
-    <p>If you didn’t request this, please ignore this email.</p>
+    <p>If you did not request this, you can safely ignore this email.</p>
+
+    <p>For assistance, please contact our support team at <a href="mailto:support@spectracell.com">support@spectracell.com</a> or call <strong>+1 (713) 621-3101</strong>.</p>
 
     <p>Best regards,<br>The SpectraCell Team</p>
     """

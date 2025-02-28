@@ -18,7 +18,7 @@ from app.core.firebase import (
     get_users_from_firestore,
 )
 from app.core.config import settings, logger
-from app.services.email_service import onboarding_email, onboarding_email_admin, reset_password_email_admin, send_email
+from app.services.email_service import onboarding_email, onboarding_email_admin, reset_password_email, reset_password_email_admin, send_email
 
 db_firestore = get_firestore_client()
 
@@ -168,7 +168,7 @@ def create_user_in_firebase(user_data: FirebaseUser):
         reset_link = auth.generate_password_reset_link(user_data.email)
         
         # Get onboarding email content
-        subject, body = onboarding_email(user_data.practice_name, reset_link)
+        subject, body = onboarding_email(user_data.first_name, reset_link)
         send_email(user_data.email, subject, body)
 
         logger.info(f"✅ User created in Firebase: {user_data.email}")
@@ -253,7 +253,7 @@ def generate_password_reset_link(email: str):
         user = get_user_by_email(email)
 
         # Get reset password email content
-        subject, body = reset_password_email(user.practice_name, reset_link)
+        subject, body = reset_password_email(user['users'][0]['first_name'], reset_link)
         send_email(email, subject, body)
 
         logger.info(f"📩 Password reset link generated for: {email}")
