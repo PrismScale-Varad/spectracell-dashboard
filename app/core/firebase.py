@@ -98,7 +98,7 @@ def get_users_from_firestore(limit: int = 10, last_uid: str = None, status: str 
             "last_name": user_data.get("last_name", "Unknown"),
             "practice_name": user_data.get("practice_name", "Unknown"),
             "npi": user_data.get("npi", "Unknown"),
-            "status": "On Hold" if user_data.get("status") == "on_hold" else user_data.get("status", "Active")
+            "status": user_data.get("status", "active")
         })
         last_doc_id = user_data.get("uid")  # Store last user's UID for next page
 
