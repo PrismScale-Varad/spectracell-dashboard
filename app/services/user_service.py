@@ -18,7 +18,7 @@ from app.core.firebase import (
     get_users_from_firestore,
 )
 from app.core.config import settings, logger
-from app.services.email_service import send_email
+from app.services.email_service import onboarding_email, onboarding_email_admin, reset_password_email_admin, send_email
 
 db_firestore = get_firestore_client()
 
@@ -40,17 +40,10 @@ def create_admin(db: Session, user_data: UserCreate):
         # Generate a password reset link
         reset_token = generate_password_reset_token(db_user.email)
         reset_link = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
-        send_email(
-            recipient=db_user.email,
-            subject="Set Up Your Admin Account",
-            body=f"""
-            <p>Hello!</p>
-            <p>Your admin account has been created. Please set your password using the link below:</p>
-            <a href="{reset_link}">Set Password</a>
-            <p>Reset token: {reset_token}</p>
-            <p>This link will expire in 24 hours.</p>
-            """
-        )
+        
+        # Get onboarding email content for admin
+        subject, body = onboarding_email_admin(db_user.email, reset_link)
+        send_email(db_user.email, subject, body)
 
         logger.info(f"✅ Admin created: {user_data.email}")
         return db_user
@@ -85,20 +78,12 @@ def send_admin_reset_password_email(db: Session, email: str):
 
     # Generate a reset token
     reset_token = generate_password_reset_token(email)
-
     reset_link = f"{settings.FRONTEND_URL}/auth/reset-password?token={reset_token}"
 
-    # Send email
-    subject = "Password Reset Request"
-    body = f"""
-    <p>Hello!</p>
-    <p>You requested a password reset. Click the link below to set a new password:</p>
-    <p><a href="{reset_link}">{reset_link}</a></p>
-    <p>Reset token: {reset_token}</p>
-    <p>If you didn't request this, please ignore this email.</p>
-    """
-    
+    # Get reset password email content for admin
+    subject, body = reset_password_email_admin(email, reset_link)
     send_email(email, subject, body)
+
     return {"message": "Password reset email sent"}
 
 # Neon PostgreSQL: Delete dashboard admin by email
@@ -181,12 +166,10 @@ def create_user_in_firebase(user_data: FirebaseUser):
 
         # Send a password reset link
         reset_link = auth.generate_password_reset_link(user_data.email)
-        recipient = user_data.email
-        subject = "Welcome to Spectracell"
-        body = f"""<h1>Hello, {user_data.practice_name}!</h1>
-        <p>Please set a password to continue <a href="{reset_link}">Reset Link</a></p>
-        <p>Thank you for signing up.</p>"""
-        send_email(recipient, subject, body)
+        
+        # Get onboarding email content
+        subject, body = onboarding_email(user_data.practice_name, reset_link)
+        send_email(user_data.email, subject, body)
 
         logger.info(f"✅ User created in Firebase: {user_data.email}")
         return user.uid
@@ -268,13 +251,11 @@ def generate_password_reset_link(email: str):
     try:
         reset_link = auth.generate_password_reset_link(email)
         user = get_user_by_email(email)
-        recipient = email
-        subject = "Reset your Spectracell password"
-        body = f"""<h1>Hello, {user.practice_name}!</h1>
-        <p>We recieved a password reset request.</p>
-        <p>Follow this link to reset your password: <a href="{reset_link}">Reset Link</a></p>
-        <p>If you did not request for a password reset, kindly ignore this email</p>"""
-        send_email(recipient, subject, body)
+
+        # Get reset password email content
+        subject, body = reset_password_email(user.practice_name, reset_link)
+        send_email(email, subject, body)
+
         logger.info(f"📩 Password reset link generated for: {email}")
         return reset_link
     except Exception as e:
