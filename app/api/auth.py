@@ -2,9 +2,8 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.user import User, UserLogin, TokenResponse, UserResponse
-from app.services.auth_service import authenticate_admin, generate_admin_access_token
+from app.services.auth_service import authenticate_admin, generate_admin_access_token, save_session_token
 from app.services.user_service import send_admin_reset_password_email, set_admin_password
-from app.core.security import verify_access_token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -16,6 +15,11 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     access_token = generate_admin_access_token(admin)
+    
+    # Save the session token in the database
+    if not save_session_token(db, admin, access_token):
+        raise HTTPException(status_code=500, detail="Failed to save session token")
+
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me", response_model=UserResponse, summary="Get logged-in admin details")

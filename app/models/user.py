@@ -18,6 +18,7 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     role = Column(SQLAlchemyEnum(UserRole), default=UserRole.ADMIN, nullable=False)
+    session_token = Column(String, unique=True, nullable=True, default=None)
 
 # Pydantic schemas for validation
 class UserBase(BaseModel):
