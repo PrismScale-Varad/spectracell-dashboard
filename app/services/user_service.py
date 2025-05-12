@@ -39,7 +39,7 @@ def create_admin(db: Session, user_data: UserCreate):
 
         # Generate a password reset link
         reset_token = generate_password_reset_token(db_user.email)
-        reset_link = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
+        reset_link = f"{settings.FRONTEND_URL}/auth/reset-password?token={reset_token}"
         
         # Get onboarding email content for admin
         subject, body = onboarding_email_admin(db_user.email, reset_link)
